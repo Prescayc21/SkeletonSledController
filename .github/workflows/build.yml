@@ -1,0 +1,75 @@
+name: Build Application
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    - name: Build with PyInstaller
+      run: |
+        # Create a simple icon for Windows
+        pip install pillow
+        python -c "from PIL import Image, ImageDraw; img = Image.new('RGBA', (256, 256), color=(0, 0, 0, 0)); draw = ImageDraw.Draw(img); [draw.ellipse((128-i, 128-i, 128+i, 128+i), fill=(0, int(50 + (205 * (128-i)/128)), int(50 + (205 * (128-i)/128)), 255)) for i in range(128, 0, -1)]; img.save('app_icon.ico', format='ICO')"
+        # Build the application
+        pyinstaller skeletonsled.spec
+    - name: Upload Windows Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: SkeletonSledController-Windows
+        path: dist/SkeletonSledController
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    - name: Build with PyInstaller
+      run: |
+        # Create a simple icon for macOS
+        pip install pillow
+        python -c "from PIL import Image, ImageDraw; img = Image.new('RGBA', (256, 256), color=(0, 0, 0, 0)); draw = ImageDraw.Draw(img); [draw.ellipse((128-i, 128-i, 128+i, 128+i), fill=(0, int(50 + (205 * (128-i)/128)), int(50 + (205 * (128-i)/128)), 255)) for i in range(128, 0, -1)]; img.save('app_icon.png')"
+        # Convert PNG to ICNS (macOS icon format)
+        mkdir -p AppIcon.iconset
+        sips -z 16 16 app_icon.png --out AppIcon.iconset/icon_16x16.png
+        sips -z 32 32 app_icon.png --out AppIcon.iconset/icon_16x16@2x.png
+        sips -z 32 32 app_icon.png --out AppIcon.iconset/icon_32x32.png
+        sips -z 64 64 app_icon.png --out AppIcon.iconset/icon_32x32@2x.png
+        sips -z 128 128 app_icon.png --out AppIcon.iconset/icon_128x128.png
+        sips -z 256 256 app_icon.png --out AppIcon.iconset/icon_128x128@2x.png
+        sips -z 256 256 app_icon.png --out AppIcon.iconset/icon_256x256.png
+        sips -z 512 512 app_icon.png --out AppIcon.iconset/icon_256x256@2x.png
+        sips -z 512 512 app_icon.png --out AppIcon.iconset/icon_512x512.png
+        cp app_icon.png AppIcon.iconset/icon_512x512@2x.png
+        iconutil -c icns AppIcon.iconset
+        mv AppIcon.icns app_icon.icns
+        # Build the application
+        pyinstaller skeletonsled.spec
+    - name: Upload macOS Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: SkeletonSledController-macOS
+        path: dist/SkeletonSledController.app
