@@ -1,0 +1,40 @@
+{
+  "sensor_positions": [
+    [
+      19.0,
+      0.0
+    ],
+    [
+      -19.0,
+      0.0
+    ],
+    [
+      -19.0,
+      26.5
+    ],
+    [
+      19.0,
+      26.5
+    ]
+  ],
+  "ideal_com": [
+    0.0,
+    13.3
+  ],
+  "weight_tray1": {
+    "rows": 7,
+    "columns": 8,
+    "y_position": 24.5,
+    "cell_width": 3.5,
+    "cell_height": 2.2,
+    "wall_thickness": 0.3
+  },
+  "weight_tray2": {
+    "rows": 6,
+    "columns": 8,
+    "y_position": 2.0,
+    "cell_width": 3.5,
+    "cell_height": 2.2,
+    "wall_thickness": 0.3
+  }
+}
