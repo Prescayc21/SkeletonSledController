@@ -24,7 +24,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=data_files,
-    hiddenimports=[],
+    hiddenimports=['PyQt5.QtCore', 'PyQt5.QtGui', 'PyQt5.QtWidgets', 'numpy', 'serial', 'serial.tools.list_ports'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -36,7 +36,7 @@ a = Analysis(
 )
 
 pyz = PYZ(
-    a.pure,
+    a.pure, 
     a.zipped_data,
     cipher=block_cipher
 )
@@ -52,7 +52,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,  # No console window
-    icon=windows_icon,  # Use icon if it exists, otherwise None
+    icon=windows_icon,
 )
 
 # Create a directory with all dependencies
@@ -72,12 +72,15 @@ if is_mac:
     app = BUNDLE(
         coll,
         name='SkeletonSledController.app',
-        icon=mac_icon,  # Use icon if it exists, otherwise None
+        icon=mac_icon,
         bundle_identifier='com.example.skeletonsled',
         info_plist={
             'CFBundleShortVersionString': '1.0.0',
             'CFBundleVersion': '1.0.0',
             'NSHighResolutionCapable': 'True',
-            'NSRequiresAquaSystemAppearance': 'False',  # Support Dark Mode
+            'NSPrincipalClass': 'NSApplication',
+            'LSBackgroundOnly': 'False',
+            'CFBundleDisplayName': 'SkeletonSledController',
+            'NSRequiresAquaSystemAppearance': 'False',
         },
     )
