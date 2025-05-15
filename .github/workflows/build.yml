@@ -32,7 +32,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SkeletonSledController-Windows
-        path: dist/SkeletonSledController
+        path: dist/
 
   build-macos:
     runs-on: macos-latest
