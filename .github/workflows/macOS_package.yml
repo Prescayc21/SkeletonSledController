@@ -1,0 +1,56 @@
+name: Create Simple macOS Package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Create Simple macOS Package
+      run: |
+        # Create a directory structure
+        mkdir -p MacOS_App
+        
+        # Copy all Python files
+        cp -r *.py tabs fake_bluetooth.py bluetooth.py Cal_Math.py Alg_Math.py MacOS_App/
+        
+        # Create a requirements.txt file
+        echo "PyQt5>=5.15.0" > MacOS_App/requirements.txt
+        echo "numpy>=1.20.0" >> MacOS_App/requirements.txt
+        echo "pyserial>=3.5" >> MacOS_App/requirements.txt
+        
+        # Create a run script
+        echo '#!/bin/bash' > MacOS_App/run_app.command
+        echo 'cd "$(dirname "$0")"' >> MacOS_App/run_app.command
+        echo 'echo "Installing dependencies..."' >> MacOS_App/run_app.command
+        echo 'python3 -m pip install -r requirements.txt' >> MacOS_App/run_app.command
+        echo 'echo "Starting Skeleton Sled Controller..."' >> MacOS_App/run_app.command
+        echo 'python3 main.py' >> MacOS_App/run_app.command
+        
+        # Make it executable
+        chmod +x MacOS_App/run_app.command
+        
+        # Create a README
+        echo '# Skeleton Sled Controller for macOS' > MacOS_App/README.txt
+        echo '' >> MacOS_App/README.txt
+        echo 'To run the application:' >> MacOS_App/README.txt
+        echo '1. Right-click on run_app.command' >> MacOS_App/README.txt
+        echo '2. Select "Open" from the menu' >> MacOS_App/README.txt
+        echo '3. Click "Open" if prompted about security' >> MacOS_App/README.txt
+        echo '' >> MacOS_App/README.txt
+        echo 'This will install the required dependencies and run the application.' >> MacOS_App/README.txt
+        
+        # Create a ZIP file
+        cd MacOS_App
+        zip -r ../MacOS_App.zip .
+        cd ..
+        
+        # List the created files
+        ls -la MacOS_App
+    - name: Upload macOS Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: SkeletonSledController-macOS-Script
+        path: MacOS_App.zip
